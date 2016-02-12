@@ -64,6 +64,18 @@
       ((null? variables) #f)
       ((eq? n (car variables) #t)
       (else (declared? n (cdr variables))))))
+      
+; remove the value that is assigned to the variable
+(define remove
+  (lambda (var state)
+    (if (eq? var (caar state))
+        (cons (car state) (cons (cons 'no-value (cdadr state)) '()))
+        (remove var (restof state)))))
+
+; get the rest of the state
+(define restof
+  (lambda (state)
+    (cons (cdar state) (cons (cdadr state) '()))))
 
 ; not part of the project, used as a reference to see how the parse tree will come out
 ; return the parse tree
