@@ -1,7 +1,6 @@
 ; eecs345
 ; project #1
-; Yan Ling Cheung yxc482
-; Yuanjing Shi yxs638
+; Yan Ling Cheung
 
 (load "simpleParser.scm")
 
