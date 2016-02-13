@@ -1,4 +1,5 @@
 ; still missing: M_value, M_boolean, Insert, Remove, M_state-return
+#lang racket
 
 (load "simpleParser.scm")
 
@@ -61,10 +62,18 @@
 (define declared?
   (lambda (n vars)
     (cond
+<<<<<<< Updated upstream
       ((null? vars) #f)
       ((eq? n (car vars) #t)
       (else (declared? n (cdr vars)))))))
 
+=======
+      ((null? variables) #f)
+      ((eq? n (car variables) #t)
+<<<<<<< Updated upstream
+      (else (declared? n (cdr variables))))
+      
+>>>>>>> Stashed changes
 ; remove the value that is assigned to the variable
 (define remove
   (lambda (var state)
@@ -76,11 +85,21 @@
 (define restof
   (lambda (state)
     (cons (cdar state) (cons (cdadr state) '()))))
+=======
+      (else (declared? n (cdr variables)))
+>>>>>>> Stashed changes
 
 ;
 (define M_boolean
   (lambda (condition state)
+    (cond)))
+
+(define M_value
+  (lambda (condition state)
     (cond
+      
+
+
       
 
 ; not part of the project, used as a reference to see how the parse tree will come out
@@ -116,4 +135,8 @@
 
 ; parameters for var
 (define vexpression caddr)
+<<<<<<< Updated upstream
 (define variablesin cadr)
+=======
+(define variables cadr)
+>>>>>>> Stashed changes
