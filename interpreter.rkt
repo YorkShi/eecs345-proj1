@@ -25,8 +25,8 @@
                                           (M_state-ifelse (if_condition statement) (then statement) (else statement) state)))
       ((eq? (function statement) 'return) (M_state-return (rexpression statement) state))
       ((eq? (function statement) 'var) (if (eq? (length statement) 3)
-                                           (M_state-var (variable statement) (vexpression statement) statement)
-                                           (M_state-declare (variable statement) statement)))
+                                           (M_state-var (variablesin statement) (vexpression statement) statement)
+                                           (M_state-declare (variablesin statement) statement)))
       (else (error 'unkown "unknow function")))))
 
 ; returns the state after the while loop is over
@@ -59,12 +59,12 @@
 
 ; check if the variable is declared
 (define declared?
-  (lambda (n variables)
+  (lambda (n vars)
     (cond
-      ((null? variables) #f)
-      ((eq? n (car variables) #t)
-      (else (declared? n (cdr variables))))))
-      
+      ((null? vars) #f)
+      ((eq? n (car vars) #t)
+      (else (declared? n (cdr vars)))))))
+
 ; remove the value that is assigned to the variable
 (define remove
   (lambda (var state)
@@ -76,6 +76,12 @@
 (define restof
   (lambda (state)
     (cons (cdar state) (cons (cdadr state) '()))))
+
+;
+(define M_boolean
+  (lambda (condition state)
+    (cond
+      
 
 ; not part of the project, used as a reference to see how the parse tree will come out
 ; return the parse tree
@@ -98,7 +104,6 @@
 (define while_body caddr)
 
 ; parameter for assign
-(define variable cadr)
 (define expression caddr)
 
 ; parameters for if
@@ -111,4 +116,4 @@
 
 ; parameters for var
 (define vexpression caddr)
-(define variable cadr)
+(define variablesin cadr)
