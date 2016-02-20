@@ -1,39 +1,41 @@
 #lang racket
 
-; 1. If the list consists no element or one, return #true
-(define inorder?
-  (lambda (lis)
-    (cond
-      ((null? lis) #t)
-      ((null? (cdr lis)) #t)
-      ((<= (car lis) (car (cdr lis))) (inorder? (cdr lis)))
-      (else #f))))
 
-; 2. Use map to calculate the dotproduct, simple and fast
-(define dotproduct
-  (lambda (l1 l2)
+; 1. Use map to calculate the dotproduct, simple and fast
+(define dotproduct-cps
+  (lambda (l1 l2 return)
     (cond
-    ((or (null? l1) (null? l2)) 0)
-    (else (+ (* (car l1) (car l2)) (dotproduct (cdr l1) (cdr l2)))))))
+    ((or (null? l1) (null? l2)) (return 0))
+    (else (+ (* (car l1) (car l2)) (dotproduct-cps (cdr l1) (cdr l2)))))))
 
-; 3. Define a nmethod to compute every round of the squareroot and then use suqareroot to recursively calculate the result
+; 2. Define a nmethod to compute every round of the squareroot and then use suqareroot to recursively calculate the result
 (define nmethod
   (lambda (a b)
     (- a (/ (- (* a a) b) (* a 2)))))
 
-(define squareroot
+(define squareroot-cps
   (lambda (a b c)
     (cond
       ((null? b) a)
       (else (squareroot (nmethod a c) (- b 1) c)))))
 
-; 4. Use three conditions to remove the first orrurance of each elements in L1 from L2
-(define removesubsequence
-  (lambda (l1 l2)
+; 3. Use three conditions to remove the first orrurance of each elements in L1 from L2
+(define removesubsequence-cps
+  (lambda (l1 l2 return)
     (cond
-      ((null? l1) l2)
+      ((null? l1) (return l2))
       ((eq? (car l1) (car l2)) (removesubsequence (cdr l1) (cdr l2)))
       (else (cons (car l2) (removesubsequence l1 (cdr l2)))))))
+
+; 4. Replaceall in cps style
+
+(define removeall*-cps
+  (lambda (a l)
+    (cond
+      ((null? l) '())
+      ((list? (car l)) (cons (removeall* a (car l)) (removeall* a (cdr l))))
+      ((eq? (car l) a) (removeall* a (cdr l)))
+      (else (cons (car l) (removeall* a (cdr l)))))))
 
 ; 5. In reverse* function, use append to keep the format of list
 (define reverse*
@@ -47,6 +49,15 @@
           (append 
            (reverse* (cdr lst)) 
            (list (car lst)))))))
+
+; 6. Use previous function dotproduct and calculate the vectormult
+(define vectormult
+ (lambda (v m)
+   (cond
+     ((null? m) '())
+     (else (cons (dotproduct v (car m)) (vectormult v (cdr m)))))))
+
+; 7. matrixmultiply in cps
 
 ; 6. use null? and list? to find the first element in list, nested or not
 (define first*
@@ -73,20 +84,17 @@
      ((null? (cdr list)) #t)
      (else (inorder? (flatten list))))))
 
-; 9. Use previous function dotproduct and calculate the vectormult
-(define vectormult
- (lambda (v m)
-   (cond
-     ((null? m) '())
-     (else (cons (dotproduct v (car m)) (vectormult v (cdr m)))))))
 
-; 10. Use map to calculate each row and each column in order
-(define matrixmultiply
- (lambda (m1 m2)
-  (map
-   (lambda (row)
-    (apply map
-     (lambda column
-      (apply + (map * row column)))
-     m2))
-   m1)))
+
+; 10. Write the following function without external helper functions or additional parameters. You do not need to use continuation passing style, but you may use continuations or call-with-current-continuation to assist you. The function suffix takes an atom and a list and returns a list containing all elements that occur after the last occurrence of the atom.
+    (define suffix
+      (lambda (a l)
+        (letrec ((suffix-cps
+          (lambda (a l k)
+            (cond
+              ((null? l) (k '()))
+              ((eq? a (car l)) (suffix-cps a (cdr l) (lambda (v) v)))
+              (else (suffix-cps a (cdr l) (lambda (v) (k (cons (car l) v)))))
+              ))))
+          (suffix-cps a l (lambda (v) v))
+          )))
