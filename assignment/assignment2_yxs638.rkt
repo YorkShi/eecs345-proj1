@@ -31,38 +31,53 @@
       (else (removesubsequence-cps l1 (cdr l2) (lambda (v) (return (cons (car l2) v))))))))
 
 ; 4. Replaceall in cps style
-(define replaceall*
+(define replaceall*-cps
   (lambda (old new l return)
     (cond
       ((null? l) (return '()))
-      ((list? (car l))(cons (replaceall* old new (car l) return)(replaceall* old new (cdr l) return)))
-      ((eq? old (car l)) (cons new (replaceall* old new (cdr l))))
-      (else (cons (car l) (replaceall* old new (cdr l)))))))
+      ((list? (car l)) (replaceall*-cps old new (cdr l) return) (replaceall*-cps old new (car l) return))
+      ((eq? old (car l)) (replaceall*-cps old new (cdr l) (lambda(v) (return (cons new (cdr l))))))
+      (else (replaceall*-cps old new (cdr l) (lambda(v) (return (cons (car l) (cdr l)))))))))
 
 ; 5. In reverse* function, use append to keep the format of list
-(define reverse*
-  (lambda (lst) 
-   (cond ((null? lst) '() ) 
+(define reverse*-cps
+  (lambda (lst return) 
+   (cond ((null? lst) (return '())) 
          ((pair? (car lst)) 
           (append 
-           (reverse* (cdr lst)) 
-           (list (reverse* (car lst))))) 
+           (reverse*-cps (cdr lst)) 
+           (list (reverse*-cps (car lst))))) 
          (else 
           (append 
-           (reverse* (cdr lst)) 
+           (reverse*-cps (cdr lst)) 
            (list (car lst)))))))
 
 ; 6. Use previous function dotproduct and calculate the vectormult
-(define vectormult
- (lambda (v m)
+(define vectormult-cps
+ (lambda (v m r)
    (cond
-     ((null? m) '())
-     (else (cons (dotproduct-cps v (car m)) (vectormult v (cdr m)))))))
+     ((null? m) (r '()))
+     (else (vectormult-cps v (cdr m) (lambda(l) (r (cons (dotproduct-cps v (car m) (lambda(q) q)) l))))))))
 
 ; 7. matrixmultiply in cps
 
-; 8. removesubsequence*
+(define matrixmultiply
+ (lambda (m1 m2)
+  (map
+   (lambda (row)
+    (apply map
+     (lambda column
+      (apply + (map * row column)))
+     m2))
+   m1)))
 
+; 8. removesubsequence*
+(define removesubsequence-cps
+  (lambda (l1 l2 return)
+    (cond
+      ((null? l1) (return l2))
+      ((eq? (car l1) (car l2)) (removesubsequence-cps (cdr l1) (cdr l2) return))
+      (else (removesubsequence-cps l1 (cdr l2) (lambda (v) (return (cons (car l2) v))))))))
 
 
 ; 9. Write the following function without external helper functions or additional parameters. You do not need to use continuation passing style, but you may use continuations or call-with-current-continuation to assist you. The function suffix takes an atom and a list and returns a list containing all elements that occur after the last occurrence of the atom.
