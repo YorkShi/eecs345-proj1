@@ -22,5 +22,17 @@ subsequence_cps n [] return = return []
 subsequence_cps n m return = 
 	if (head m) == (head n)
 	then
-		subsequence_cps (tail n) 
+		subsequence_cps (tail n) (tail m) return
+	else
+		subsequence_cps n (tail m) (\v -> return ((head m) v))
+		
+{- create a type -}
+data Coordinate = Coord Double Double 
+				  Coord3D Double Double Double[]deriving(Eq, Show)
+
+getx (Coord x y) = x
+gety (Coord x y) = y
+
+distance (Coord x y) = sqrt(x*x + y*y)
+ 
 				
