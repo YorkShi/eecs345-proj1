@@ -23,3 +23,13 @@ data GenericCoordinate a = GCoord a a deriving (Show Eq)
 
 mydivide x y = x / y
 mydivide2 x = (\y -> x/y)
+
+mysub x y z = (x - y) - z
+mysub2 x = (\y -> (\z -> (x - y) - z))
+
+data Value = NaN | Value Rational deriving (Show, Eq)
+
+mydivide3 NaN _ = NaN
+mydivide3 _ NaN = NaN
+mydivide3 (Value x) (Value y) = if (y == 0) then NaN else Value (x / y)
+  
