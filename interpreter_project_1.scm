@@ -19,11 +19,77 @@
     (if (null? parsetree)
         state
         (evaluate (cdr parsetree) (M_state (car parsetree) state)))))
-  
+
+;;;;;;;;;;;M_value functions;;;;;;;;;;;;;;
+(define M_value
+  (lambda (expression state)
+    (cond
+      ((null? expression) '())
+      ((number? expression) expression)
+      ((eq? 'true expression) #t)
+      ((eq? 'false expression) #f)
+      ((atom? expression) (lookup expression state)) 
+      ((member (operator expression) '(+ - * / %)) (M_value-arith expression state))
+      ((member (operator expression) '(&& || ! < > <= >= == !=)) (M_value-boolean expression state)))))
+
+(define M_value-arith
+  (lambda (expression state)
+    (cond
+      ((eq? '+ (operator expression)) (+ (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+      ((eq? '- (operator expression)) (if (not (null? (cddr expression)))
+                                            (- (M_value (operand1 expression) state) (M_value (operand2 expression) state))
+                                            (- 0 (M_value (operand1 expression) state))))
+      ((eq? '* (operator expression)) (* (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+      ((eq? '/ (operator expression)) (quotient (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+      ((eq? '% (operator expression)) (remainder (M_value (operand1 expression) state) (M_value (operand2 expression) state)))            
+      (else (error 'unknown "unknown expression")))))
+
+(define M_value-boolean
+  (lambda (expression state)
+      (cond
+        ((eq? 'true expression) #t)
+        ((eq? 'false expression) #f)
+        ((eq? '&& (operator expression)) (and (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '|| (operator expression)) (or (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '! (operator expression)) (not (M_value (operand1 expression) state))) 
+        ((eq? '< (operator expression)) (< (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '> (operator expression)) (> (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '<= (operator expression)) (<= (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '>= (operator expression)) (>= (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '== (operator expression)) (eq? (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '!= (operator expression)) (not (eq? (M_value (operand1 expression) state) (M_value (operand2 expression) state))))
+        (else (error 'unknown "unknown expression")))))
+
+(define operator car)
+
+(define operand1 cadr)
+
+(define operand2 caddr)
+
+;M_value-return will take a return statement and return the statement right of "return"
+(define M_value-return
+  (lambda (expression state return)
+    (return (convert_value (M_value (evaluatable expression) state)) state)))
+
+(define evaluatable cadr)
+
+; converts #t or #f to true and false respectively
+(define convert_value
+  (lambda (v)
+    (cond
+      ((null? v) '())
+      ((eq? v #t) 'true)
+      ((eq? v #f) 'false)
+      (else v))))
+
+;;;;;;;;;;;;M_state functions;;;;;;;;;;;
 ; return the state after input statement takes place
 (define M_state
   (lambda (statement state)
     (cond
+      ((null? (function statement)) (error 'error "Statement could not be empty."))
+      ((number? expression) expression)
+   
       ((eq? (function statement) 'while) (M_state-while (while_condition statement) (while_body statement) state))
       ((eq? (function statement) '=) (M_state-assign (left-operand statement) (expression statement) state))
       ((eq? (function statement) 'if) (if (eq? (length statement) 3)
@@ -33,6 +99,22 @@
       ((eq? (function statement) 'var) (M_state-declare statement state))
       (else (M_val-statement statement state)))))
 
+
+(define M_value-boolean
+  (lambda (expression state)
+      (cond
+        ((eq? 'true expression) #t)
+        ((eq? 'false expression) #f)
+        ((eq? '&& (operator expression)) (and (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '|| (operator expression)) (or (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '! (operator expression)) (not (M_value (operand1 expression) state))) 
+        ((eq? '< (operator expression)) (< (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '> (operator expression)) (> (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '<= (operator expression)) (<= (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '>= (operator expression)) (>= (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '== (operator expression)) (eq? (M_value (operand1 expression) state) (M_value (operand2 expression) state)))
+        ((eq? '!= (operator expression)) (not (eq? (M_value (operand1 expression) state) (M_value (operand2 expression) state))))
+        (else (error 'unknown "unknown expression")))))
 ; returns the state after the while loop is over
 (define M_state-while
   (lambda (condition body state)
