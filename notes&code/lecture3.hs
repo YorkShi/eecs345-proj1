@@ -27,9 +27,27 @@ mydivide2 x = (\y -> x/y)
 mysub x y z = (x - y) - z
 mysub2 x = (\y -> (\z -> (x - y) - z))
 
-data Value = NaN | Value Rational deriving (Show, Eq)
+{- Create a data type that is a rational but also keeps track of whether we ever
+tried to make the denominator 0
+ -}
+data Value a = NaN | Value a deriving (Show, Eq)
 
-mydivide3 NaN _ = NaN
-mydivide3 _ NaN = NaN
-mydivide3 (Value x) (Value y) = if (y == 0) then NaN else Value (x / y)
-  
+-- the divide for the value type
+(//) NaN _ = NaN
+(//) _ NaN = NaN
+(//) (Value x) (Value y) = if (y == 0) then NaN else Value (x / y)
+
+-- the divide for the Value type and a function, applies the function to the internal type
+-- of value and returns a new value
+bind :: Maybe a -> (a -> Maybe b) -> Maybe b
+bind Nothing f = Nothing
+bind (Just x) f = f x
+
+-- vreturn creates a Value type given an element
+vreturn :: a -> Maybe a
+vreturn x = Just x
+
+-- the divide using bind and vreturn
+(//) vx vy =
+	bind vx (\x ->
+		bind vy (\y -> if y == 0 then Nothing else vreturn (x/y)))
