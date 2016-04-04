@@ -51,3 +51,10 @@ vreturn x = Just x
 (//) vx vy =
 	bind vx (\x ->
 		bind vy (\y -> if y == 0 then Nothing else vreturn (x/y)))
+
+
+(//) vx vy = do
+	x <- vx
+	y <- vy
+	if y == 0 then Nothing else return (x/y)
+	
