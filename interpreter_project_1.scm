@@ -184,6 +184,10 @@
       (else (list (cons (firstvar state) (variablesin (insert var val (restof state))))
                   (cons (firstval state) (valuesin (insert var val (restof state)))))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;M_value-statement;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; return the value of the input statement
 (define M_val-statement
   (lambda (stmt state)
