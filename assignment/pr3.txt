@@ -26,6 +26,7 @@ creates a new empty linked list
 inserts each element of the first array, in order, into the list, using the insert function parameter
 until the list is empty, it calls the remove function to remove elements of the list and top place them into the second array, in order
 Create a main function that tests your transfer function. Create two arrays, one filled with appropriate data and the other empty. Call the transfer function on the two arrays and the methods add_to_front and remove_from_front. Print the contents of the second array. If correct, the contents should be reversed. Repeat this process 3 more times so you can test with all combinations of the add and remove functions.
+
 Part 2: Haskell Types
 
 While Haskell is similar to Scheme, Haskell's type rules prevent us from writing a function like the *-functions of the first Scheme homework. For example, we can't write the equivalent of (reverse* '(1 3 (4 ((5) ())) 6)) because a list can't contain both int types and list types as elements.
