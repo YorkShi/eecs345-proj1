@@ -1,5 +1,5 @@
 {- calculate the factorial of a number -}
-factorial n = 
+factorial n =
   if n == 0
     then
       1
@@ -51,4 +51,5 @@ inorder lis =
         False
       else
         inorder (tail lis)
-  
+
+main = print (removesubsequence [1,2],[1,2,3])
