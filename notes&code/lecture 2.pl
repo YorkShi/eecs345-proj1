@@ -17,9 +17,16 @@ contains(X, [H | T]) :- contains(X, T).
 % insertbefore a x [w x y z] => [w a x y z]
 
 insertbefore (A, X, [X|_],[A,X|_]).
-insertbefore (A,X,[H|T1],[H|T2]) :- insertbefore(A,XT1,T2).
-
+insertbefore (A,X,[H|T1],[H|T2]) :- insertbefore(A,X,T1,T2).
 
 % insertbeforeall a x [w.x.y.x.z.x] => [w,a,x,y,a,x,z,a,x]
 
+insertbefore (_, _, [],[]).
+insertbefore (A, X, [X|T1],[A,X|T2]) :- insertbefore(A,X,T1,T2).
+insertbefore (A,X,[H|T1],[H|T2]) :- insertbefore(A,XT1,T2).
+
 % flatten
+
+% factorial
+factorial(0,1).
+factorial(N,X) :- M is N - 1, factorial(M,Y), X is Y * N.
