@@ -1,0 +1,21 @@
+Tests for those who did past challenges: overloaded functions, call-by-reference, expressions with side-effects
+
+Test 21 should return 530 when running A's main.
+
+
+class A {
+
+  function add(a, b) {
+    return a + b;
+  }
+
+  function add(a,b,c) {
+    return a + b + c;
+  }
+
+  static function main() {
+    var x = 10;
+    var y = 20;
+    return new A().add(x, y) + new A().add(x, y, y) * 10;
+  }
+}

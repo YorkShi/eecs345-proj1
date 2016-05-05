@@ -1,0 +1,15 @@
+Test 52 should return 10 when running A's main.
+
+
+class A {
+  var x;
+
+  A(val) {
+    x = val;
+  }
+
+  static function main() {
+    var a = new A(10);
+    return a.x;
+  }
+}

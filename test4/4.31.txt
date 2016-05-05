@@ -1,0 +1,11 @@
+Tests for those implementing static functions and variables
+
+Test 31 should return 20 when running A's main.
+
+
+class A {
+  static var x = 10;
+  static function main() {
+    return A.x + x;
+  }
+}
