@@ -1,0 +1,8 @@
+Additional Test for Those Seeking an Extra Challenge
+
+Test 20: This code should return 21.
+
+var x = 0;
+while ((x = x + 1) < 21)
+  x = x;
+return x;
