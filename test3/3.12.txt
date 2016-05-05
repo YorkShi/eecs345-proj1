@@ -1,0 +1,9 @@
+Test 12: Mismatched parameters and arguments. This code should give an error.
+
+function f(a) {
+  return a*a;
+}
+
+function main() {
+  return f(10, 11, 12);
+}

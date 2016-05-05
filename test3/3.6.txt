@@ -1,0 +1,19 @@
+Test 6: Verifying that your code uses static scoping instead of dynamic scoping. This code should return 115.
+
+var a = 10;
+var b = 20;
+
+function bmethod() {
+  var b = 30;
+  return a + b;
+}
+
+function cmethod() {
+  var a = 40;
+  return bmethod() + a + b;
+}
+
+function main () {
+  var b = 5;
+  return cmethod() + a + b;
+}

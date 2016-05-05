@@ -1,0 +1,8 @@
+Test 2: A function that uses global variables. This code should return 14.
+
+var x = 4;
+var y = 6 + x;
+
+function main() {
+  return x + y;
+}

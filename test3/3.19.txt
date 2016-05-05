@@ -1,0 +1,23 @@
+Test 19: Throwing an exception inside a function. This code should return 100.
+
+function divide(x, y) {
+  if (y == 0)
+    throw y;
+  return x / y;
+}
+
+function main() {
+  var x;
+
+  try {
+    x = divide(10, 5) * 10;
+    x = x + divide(5, 0);
+  }
+  catch(e) {
+    x = e;
+  }
+  finally {
+    x = x + 100;
+  }
+  return x;
+}

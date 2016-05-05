@@ -1,0 +1,13 @@
+Test 13: Functions inside functions. This code should return 90.
+
+function main() {
+  function h() {
+    return 10;
+  }
+
+  function g() {
+    return 100;
+  }
+
+  return g() - h();
+}
