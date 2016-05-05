@@ -1,0 +1,5 @@
+Test 25: This code should return 16.
+
+var x = 10;
+x = x + (x = 6);
+return x;
